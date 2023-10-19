@@ -97,12 +97,12 @@ Future<PokemonList> fetchPokemons () async {
   @override
   void initState() {
     super.initState();
-    searchController.addListener(_printLatestValue);
+    searchController.addListener(_onSearchControllerInput);
     //futurePokemon = fetchPokemon();
     futurePokemons = fetchPokemons();
   }
 
-  void _printLatestValue() {
+  void _onSearchControllerInput() {
     final text = searchController.text;
     setState(() {
       filteredPokemons = pokemons.where((pokemon) => pokemon.name.contains(text)).toList();
