@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:onboarding_tm/pokemon.dart';
 import 'package:onboarding_tm/pokemon_list.dart';
 import 'package:onboarding_tm/pokemon_tile.dart';
 
 class PokemonListView extends StatelessWidget {
   final Future<PokemonList> futurePokemons;
+  final List<Pokemon> pokemons;
 
-  const PokemonListView({super.key, required this.futurePokemons});
+  const PokemonListView({super.key, required this.futurePokemons, required this.pokemons});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,9 @@ class PokemonListView extends StatelessWidget {
               if (snapshot.hasData) {
                 return ListView.builder(
                   shrinkWrap: true,
-                  itemCount: snapshot.data!.pokemonList.length,
+                  itemCount: pokemons.length,
                   itemBuilder: (context, index) {
-                    return PokemonTile(name: snapshot.data!.pokemonList[index].name);
+                    return PokemonTile(name: pokemons[index].name);
                   },
                 );
               } else if (snapshot.hasError) {
