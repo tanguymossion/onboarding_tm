@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:onboarding_tm/favorite_provider.dart';
 import 'dart:convert';
 
 import 'package:onboarding_tm/pokemon.dart';
 
-class PokemonDetailsPage extends StatefulWidget {
+class PokemonDetailsPage extends ConsumerStatefulWidget {
   final String pokemonName;
 
   const PokemonDetailsPage({super.key, required this.pokemonName});
 
   @override
-  PokemonDetailsPageState createState() => PokemonDetailsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return PokemonDetailsPageState();
+  }
 }
 
-class PokemonDetailsPageState extends State<PokemonDetailsPage> {
+class PokemonDetailsPageState extends ConsumerState<PokemonDetailsPage> {
   late Future<Pokemon> _pokemonDetails;
 
   @override
@@ -34,6 +38,9 @@ class PokemonDetailsPageState extends State<PokemonDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isFav = ref.watch(favoriteProvider).contains(widget.pokemonName);
+    final favIcon = isFav ? Icons.favorite : Icons.favorite_border;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -47,15 +54,29 @@ class PokemonDetailsPageState extends State<PokemonDetailsPage> {
             return Center(
                 child: Column(
               children: [
+                
                 Container(
+                  // add fav icon button at bottom left of container
                   margin: const EdgeInsets.all(15.0),
                   padding: const EdgeInsets.all(3.0),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(color: Colors.black)),
                   child:
-                    Image.network(pokemonDetails.spriteUrl, fit: BoxFit.fill),
-                ),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        Image.network(pokemonDetails.spriteUrl, fit: BoxFit.fill),
+                        IconButton(
+                          icon: Icon(favIcon),
+                          onPressed: () {
+                            ref
+                                .read(favoriteProvider.notifier)
+                                .switchFavorite(widget.pokemonName);
+                          },
+                        ),
+                      ],
+                )),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,9 +89,8 @@ class PokemonDetailsPageState extends State<PokemonDetailsPage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(color: Colors.black)),
-                      child: Text('Types: ${pokemonDetails.types.join(', ')}'
+                      child: Text('Types: ${pokemonDetails.types.join(', ')}'),
                     ),
-                  ),
                   ],
                 ),
               ],

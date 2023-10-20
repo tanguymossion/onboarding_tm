@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:onboarding_tm/favorite_provider.dart';
 import 'package:onboarding_tm/pokemon.dart';
 import 'package:onboarding_tm/pokemon_details.dart';
 import 'dart:convert';
@@ -33,7 +35,11 @@ final GoRouter _router = GoRouter(
 );
 
 void main() {
-  runApp(const MyApp());
+  final favProvider = StateNotifierProvider<FavoriteNotifier, Set<String>>((ref) {
+    return FavoriteNotifier();
+  });
+
+   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
