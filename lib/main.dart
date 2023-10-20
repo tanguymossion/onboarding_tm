@@ -22,9 +22,9 @@ import 'package:onboarding_tm/pokemon_list_view.dart';
   }
 }*/
 
-Future<PokemonList> fetchPokemons () async {
+Future<PokemonList> fetchPokemons (http.Client client) async {
   final response =
-      await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=151'));
+      await client.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=151'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     //futurePokemon = fetchPokemon();
-    futurePokemons = fetchPokemons();
+    futurePokemons = fetchPokemons(http.Client());
   }
 
   @override

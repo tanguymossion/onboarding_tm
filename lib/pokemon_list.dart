@@ -6,10 +6,14 @@ class PokemonList {
   PokemonList({required this.pokemonList});
 
   factory PokemonList.fromJson(Map<String, dynamic> json) {
-    return PokemonList(
-      pokemonList: List<Pokemon>.from(
-        json['results'].map((pokemon) => Pokemon.fromJson(pokemon)),
-      ),
-    );
+    if (json['results'] == null) {
+      return PokemonList(pokemonList: []);
+    } else {
+      return PokemonList(
+        pokemonList: List<Pokemon>.from(
+          json['results'].map((pokemon) => Pokemon.fromJson(pokemon)),
+        ),
+      );
+    }
   }
 }
