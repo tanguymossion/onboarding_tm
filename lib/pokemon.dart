@@ -15,6 +15,17 @@ class Pokemon {
     required this.weight,
   });
 
+  factory Pokemon.fromString(String pokemonName) {
+    return Pokemon(
+      pokemonId: null,
+      name: pokemonName,
+      types: [],
+      spriteUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png',
+      height: null,
+      weight: null,
+    );
+  }
+
   factory Pokemon.fromJson(Map<String, dynamic> json) {
     return Pokemon(
       pokemonId: json['id'],

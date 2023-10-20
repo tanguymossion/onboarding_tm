@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
-import 'package:onboarding_tm/favorite_provider.dart';
+import 'package:onboarding_tm/favorites.dart';
 import 'package:onboarding_tm/pokemon.dart';
 import 'package:onboarding_tm/pokemon_details.dart';
 import 'dart:convert';
@@ -22,7 +22,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details',
       builder: (BuildContext context, GoRouterState state) {
-        if(state.extra != null) {
+        if (state.extra != null) {
           return PokemonDetailsPage(pokemonName: state.extra as String);
         } else {
           return const MyHomePage(
@@ -35,11 +35,7 @@ final GoRouter _router = GoRouter(
 );
 
 void main() {
-  final favProvider = StateNotifierProvider<FavoriteNotifier, Set<String>>((ref) {
-    return FavoriteNotifier();
-  });
-
-   runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -111,6 +107,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Favorites',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +134,24 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
-        body: SingleChildScrollView(
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorites',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          onTap: _onItemTapped,
+        ),
+        body: 
+        _selectedIndex == 0 ?
+        SingleChildScrollView(
             child: Column(children: [
           Container(
               padding: const EdgeInsets.all(10),
@@ -131,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               )),
           PokemonListView(
               futurePokemons: futurePokemons, pokemons: filteredPokemons)
-        ])));
+        ])) :
+        const FavoritesPage());
   }
 }

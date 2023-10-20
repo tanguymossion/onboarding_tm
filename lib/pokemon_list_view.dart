@@ -4,7 +4,7 @@ import 'package:onboarding_tm/pokemon_list.dart';
 import 'package:onboarding_tm/pokemon_tile.dart';
 
 class PokemonListView extends StatelessWidget {
-  final Future<PokemonList> futurePokemons;
+  final Future<PokemonList>? futurePokemons;
   final List<Pokemon> pokemons;
 
   const PokemonListView({super.key, required this.futurePokemons, required this.pokemons});
@@ -14,7 +14,7 @@ class PokemonListView extends StatelessWidget {
     return FutureBuilder<PokemonList>(
             future: futurePokemons,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData || futurePokemons == null) {
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: pokemons.length,

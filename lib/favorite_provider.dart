@@ -23,6 +23,10 @@ class FavoriteNotifier extends StateNotifier<Set<String>> {
         }
     }
 
+    List<String> getAllFavorites() {
+        return state.toList();
+    }
+
     bool isFavorite(String name) {
         return state.contains(name);
     }
