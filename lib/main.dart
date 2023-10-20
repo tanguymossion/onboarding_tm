@@ -1,30 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:onboarding_tm/pokemon.dart';
+import 'package:onboarding_tm/pokemon_details.dart';
 import 'dart:convert';
 
 import 'package:onboarding_tm/pokemon_list.dart';
 import 'package:onboarding_tm/pokemon_list_view.dart';
 
-/*Future<Pokemon> fetchPokemon() async {
-  final response =
-      await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/1'));
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    // log response
-    print(Pokemon.fromJson(jsonDecode(response.body)));
-    return Pokemon.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load pokemon');
-  }
-}*/
-
-
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) {
+          return const MyHomePage(
+            title: 'Onboarding Pokemon',
+          );
+        }),
+    GoRoute(
+      path: '/details',
+      builder: (BuildContext context, GoRouterState state) {
+        if(state.extra != null) {
+          return PokemonDetailsPage(pokemonName: state.extra as String);
+        } else {
+          return const MyHomePage(
+            title: 'Onboarding Pokemon',
+          );
+        }
+      },
+    ),
+  ],
+);
 
 void main() {
   runApp(const MyApp());
@@ -33,16 +39,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Onboarding Pokemon',
+    return MaterialApp.router(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Onboarding Pokemon'),
+      routerConfig: _router,
     );
   }
 }
@@ -56,35 +60,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //late Future<Pokemon> futurePokemon;
   late Future<PokemonList> futurePokemons;
   final searchController = TextEditingController();
   List<Pokemon> filteredPokemons = [];
   List<Pokemon> pokemons = [];
 
-  // Filter futurePokemon with searchController
-  // https://stackoverflow.com/questions/63424588/how-to-filter-a-futurebuilder-in-flutter
+  Future<PokemonList> fetchPokemons() async {
+    final response = await http
+        .get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=151'));
 
-Future<PokemonList> fetchPokemons () async {
-  final response =
-      await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=151'));
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    // log response
-    print(PokemonList.fromJson(jsonDecode(response.body)));
-    setState(() {
-      pokemons = PokemonList.fromJson(jsonDecode(response.body)).pokemonList;
-      filteredPokemons = pokemons;
-    });
-    return PokemonList.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load pokemon');
+    if (response.statusCode == 200) {
+      setState(() {
+        pokemons = PokemonList.fromJson(jsonDecode(response.body)).pokemonList;
+        filteredPokemons = pokemons;
+      });
+      return PokemonList.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load pokemon');
+    }
   }
-}
 
   @override
   void dispose() {
@@ -98,42 +94,37 @@ Future<PokemonList> fetchPokemons () async {
   void initState() {
     super.initState();
     searchController.addListener(_onSearchControllerInput);
-    //futurePokemon = fetchPokemon();
     futurePokemons = fetchPokemons();
   }
 
   void _onSearchControllerInput() {
     final text = searchController.text;
     setState(() {
-      filteredPokemons = pokemons.where((pokemon) => pokemon.name.contains(text)).toList();
+      filteredPokemons =
+          pokemons.where((pokemon) => pokemon.name.contains(text)).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body:
-      SingleChildScrollView(child:
-          Column(
-            children:
-            [Container(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: SingleChildScrollView(
+            child: Column(children: [
+          Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: searchController,
                 decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Search',
-              ),
-            )
-              
-            ),
-            
-          PokemonListView(futurePokemons: futurePokemons, pokemons: filteredPokemons)])
-        
-    ));
+                  border: OutlineInputBorder(),
+                  labelText: 'Search',
+                ),
+              )),
+          PokemonListView(
+              futurePokemons: futurePokemons, pokemons: filteredPokemons)
+        ])));
   }
 }

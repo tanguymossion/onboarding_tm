@@ -19,7 +19,7 @@ class PokemonListView extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: pokemons.length,
                   itemBuilder: (context, index) {
-                    return PokemonTile(name: pokemons[index].name);
+                    return PokemonTile(pokemon: pokemons[index]);
                   },
                 );
               } else if (snapshot.hasError) {
