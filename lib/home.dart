@@ -1,12 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:onboarding_tm/favorites.dart';
-import 'package:onboarding_tm/pokemon.dart';
-import 'dart:convert';
-
-import 'package:onboarding_tm/pokemon_list.dart';
 import 'package:onboarding_tm/pokemon_list_view.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,27 +13,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<PokemonList> futurePokemons;
   final searchController = TextEditingController();
-  List<Pokemon> filteredPokemons = [];
-  List<Pokemon> pokemons = [];
-
-  Future<PokemonList> fetchPokemons() async {
-    final response = await http
-        .get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=151'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        pokemons = PokemonList.fromJson(jsonDecode(response.body)).pokemonList;
-        filteredPokemons = pokemons;
-      });
-      return PokemonList.fromJson(jsonDecode(response.body));
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load pokemon');
-    }
-  }
+  var searchText = "";
+  int _selectedIndex = 0;
 
   @override
   void dispose() {
@@ -51,19 +28,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    searchController.addListener(_onSearchControllerInput);
-    futurePokemons = fetchPokemons();
-  }
 
-  void _onSearchControllerInput() {
-    final text = searchController.text;
-    setState(() {
-      filteredPokemons =
-          pokemons.where((pokemon) => pokemon.name.contains(text)).toList();
+    searchController.addListener(() {
+      setState(() {
+        searchText = searchController.text;
+      });
     });
   }
-
-  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -86,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
-          leading:
-              IconButton(
+          leading: IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               disconnect();
@@ -111,8 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onTap: _onItemTapped,
         ),
         body: _selectedIndex == 0
-            ? SingleChildScrollView(
-                child: Column(children: [
+            ? Column(children: [
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: TextField(
@@ -122,9 +91,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         labelText: 'Search',
                       ),
                     )),
-                PokemonListView(
-                    futurePokemons: futurePokemons, pokemons: filteredPokemons)
-              ]))
+                Expanded(child: PokemonListView(searchText))
+              ])
             : const FavoritesPage());
   }
 }

@@ -20,7 +20,8 @@ class Pokemon {
       pokemonId: null,
       name: pokemonName,
       types: [],
-      spriteUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png',
+      spriteUrl:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png',
       height: null,
       weight: null,
     );
@@ -30,13 +31,12 @@ class Pokemon {
     return Pokemon(
       pokemonId: json['id'],
       name: json['name'],
-      types:
-          json['types'] != null
-              ? List<String>.from(
-                  json['types'].map((type) => type['type']['name']))
-              : List.empty(),
-      spriteUrl: json['sprites'] != null ? json['sprites']['front_default'] :
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png',
+      types: json['types'] != null
+          ? List<String>.from(json['types'].map((type) => type['type']['name']))
+          : List.empty(),
+      spriteUrl: json['sprites'] != null
+          ? json['sprites']['front_default']
+          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/100px-No_image_available.svg.png',
       height: json['height'],
       weight: json['weight'],
     );

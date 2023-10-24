@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onboarding_tm/pokemon.dart';
 import 'package:onboarding_tm/pokemon_list_view.dart';
 import 'package:onboarding_tm/favorite_provider.dart';
+import 'package:onboarding_tm/pokemon_tile.dart';
 
 class FavoritesPage extends ConsumerWidget {
   const FavoritesPage({super.key});
@@ -20,9 +21,8 @@ class FavoritesPage extends ConsumerWidget {
         const Center(
           child: Text('No favorites yet'),
         ) :
-        PokemonListView(
-          futurePokemons: null,
-          pokemons: pokemons,
+        ListView(
+          children: pokemons.map((pokemon) => PokemonTile(pokemon: pokemon)).toList(),
         );
   }
 }
