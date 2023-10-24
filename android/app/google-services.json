@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "302829653977",
+    "project_id": "unboarding-tm-402908",
+    "storage_bucket": "unboarding-tm-402908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302829653977:android:506d1acc9000da21aad3c8",
+        "android_client_info": {
+          "package_name": "com.example.onboarding_tm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoz1Bc1A7r50ysXiHyJK-1BN0_kgbNxhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
